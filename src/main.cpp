@@ -10,11 +10,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-#include "Camera.h"
-#include "GLSL.h"
-#include "Program.h"
-#include "MatrixStack.h"
-#include "Shape.h"
+#include "Scene/Camera.h"
+#include "Scene/GLSL.h"
+#include "Scene/Program.h"
+#include "Scene/MatrixStack.h"
+#include "Scene/Shape.h"
 
 using namespace std;
 using namespace glm;
