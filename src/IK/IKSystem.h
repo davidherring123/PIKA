@@ -12,7 +12,7 @@ class IKSystem
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  IKSystem(int _nLinks, Eigen::Vector3d _weights);
+  IKSystem(int _nLinks);
   void init();
   std::vector<std::shared_ptr<Link>> solve(Eigen::Vector2d target);
 

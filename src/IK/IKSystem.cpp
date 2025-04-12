@@ -28,11 +28,11 @@
 using namespace std;
 using namespace Eigen;
 
-IKSystem::IKSystem(int _nLinks, Eigen::Vector3d _weights)
+IKSystem::IKSystem(int _nLinks)
 {
 
   nLinks = _nLinks;
-  weights = _weights;
+  weights << 1e3, 1e0, 0.0;
 
   Matrix4d E(Matrix4d::Identity());
 
@@ -55,12 +55,12 @@ IKSystem::IKSystem(int _nLinks, Eigen::Vector3d _weights)
 
 vector<shared_ptr<Link>> IKSystem::solve(Eigen::Vector2d target)
 {
-  // Extract angles
   VectorXd x(nLinks);
   for (int i = 0; i < nLinks; ++i)
   {
     x(i) = links[i]->getAngle();
   }
+
   auto objective = make_shared<ObjectiveNLinkIK>();
   objective->setPTarget(target);
   objective->setWTarget(weights(0));
