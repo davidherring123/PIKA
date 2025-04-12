@@ -1,21 +1,18 @@
 #pragma once
-#ifndef LEG
-#define LEG
+#ifndef Leg_H
+#define Leg_H
+
+#include <memory>
+
+#include "../IK/IKSystem.h"
 
 class Leg
 {
 public:
-  Leg();
-  void setLinkLength();
-  void setTotalLinks();
+  Leg(int totalLimbs);
 
 private:
-  int totalLinks;
-  int linkLength;
-
-  Eigen::VectorXd
-  getDeltaP(const Eigen::VectorXd &x) const;
-  Eigen::MatrixXd getP1(const Eigen::VectorXd &x) const;
+  std::shared_ptr<IKSystem> iks;
 };
 
 #endif
