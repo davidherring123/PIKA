@@ -19,9 +19,7 @@
 
 #include "Link.h"
 #include "ObjectiveNLinkIK.h"
-#include "OptimizerGD.h"
 #include "OptimizerBFGS.h"
-#include "OptimizerNM.h"
 
 #include "IKSystem.h"
 
