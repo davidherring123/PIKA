@@ -29,12 +29,13 @@
 using namespace std;
 using namespace glm;
 
-Leg::Leg(int totalLimbs)
+Leg::Leg(int _totalLimbs, vec3 _startPosition, vec3 _facingDir)
 {
-    iks = make_shared<IKSystem>(totalLimbs);
-    startPosition = vec3(0, 0, 0);
-    target = vec3(totalLimbs, 0, 0);
-    s = vec3(0.25);
+    iks = make_shared<IKSystem>(_totalLimbs);
+    startPosition = _startPosition;
+    facingDir = _facingDir;
+    resetDistance = 0.2;
+    s = vec3(1);
 }
 
 void Leg::draw(const shared_ptr<Program> prog, shared_ptr<MatrixStack> MV, const shared_ptr<Shape> shape) const
@@ -73,4 +74,11 @@ void Leg::draw(const shared_ptr<Program> prog, shared_ptr<MatrixStack> MV, const
     iks->solve(point);
     iks->draw(prog, MV, shape);
     MV->popMatrix();
+}
+
+vec3 Leg::getResetTargetPosition()
+{
+    vec3 pos = vec3(startPosition.x, 0, startPosition.z);
+    pos += resetDistance * facingDir;
+    return pos;
 }

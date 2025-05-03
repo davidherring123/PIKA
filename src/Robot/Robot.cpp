@@ -27,31 +27,16 @@ void Robot::init(const shared_ptr<Program> _prog, const shared_ptr<Shape> _bodyS
     bodyShape = _bodyShape;
     legShape = _legShape;
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 1; i > -2; i -= 2)
     {
-        shared_ptr<Leg> l = make_shared<Leg>(limbLength);
-        legs.push_back(l);
+        for (int j = 1; j > -2; j -= 2)
+        {
+            shared_ptr<Leg> l = make_shared<Leg>(limbLength, vec3(i * bodyScale.x / 2.0f, position.y, j * bodyScale.z / 2.0f), normalize(vec3(i, 0, j)));
+            l->setTarget(l->getResetTargetPosition());
+            l->setScale(legScale);
+            legs.push_back(l);
+        }
     }
-
-    shared_ptr<Leg> l = legs.at(0);
-    l->setStart(position + vec3(1 * bodyScale.x / 2.0f, 0, 1 * bodyScale.z / 2.0f));
-    l->setTarget(vec3(1, 0, 1));
-    l->setScale(legScale);
-
-    l = legs.at(1);
-    l->setStart(position + vec3(-1 * bodyScale.x / 2.0f, 0, 1 * bodyScale.z / 2.0f));
-    l->setTarget(vec3(-1, 0, 1));
-    l->setScale(legScale);
-
-    l = legs.at(2);
-    l->setStart(position + vec3(1 * bodyScale.x / 2.0f, 0, -1 * bodyScale.z / 2.0f));
-    l->setTarget(vec3(1, 0, -1));
-    l->setScale(legScale);
-
-    l = legs.at(3);
-    l->setStart(position + vec3(-1 * bodyScale.x / 2.0f, 0, -1 * bodyScale.z / 2.0f));
-    l->setTarget(vec3(-1, 0, -1));
-    l->setScale(legScale);
 }
 
 void Robot::move(vec3 v)
@@ -60,6 +45,13 @@ void Robot::move(vec3 v)
     for (shared_ptr<Leg> l : legs)
     {
         l->setStart(l->getStart() + v);
+
+        float d = distance(l->getStart(), l->getTarget());
+
+        if (d > maxLegDistance)
+        {
+            l->setTarget(l->getResetTargetPosition());
+        }
     }
 }
 
@@ -77,8 +69,6 @@ void Robot::draw(const std::shared_ptr<MatrixStack> P, const std::shared_ptr<Mat
     glUniformMatrix4fv(prog->getUniform("MV"), 1, GL_FALSE, glm::value_ptr(MV->topMatrix()));
     bodyShape->draw(prog);
     MV->popMatrix();
-
-    int legIndex = 0;
 
     for (shared_ptr<Leg> l : legs)
     {

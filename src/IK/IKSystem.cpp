@@ -30,7 +30,7 @@ IKSystem::IKSystem(int _nLinks)
 {
 
     nLinks = _nLinks;
-    weights << 1e3, 1e0, 0.0;
+    weights << 1e1, 1e0, 1e0;
 
     Matrix4d E(Matrix4d::Identity());
 
@@ -40,7 +40,8 @@ IKSystem::IKSystem(int _nLinks)
     {
         auto link = make_shared<Link>();
         links.push_back(link);
-        link->setAngle(0.0);
+        link->setAngle(-M_PI / 4.0f);
+
         link->setPosition((i == 0 ? 0.0 : 1.0), 0.0);
         E(0, 3) = 0.5;
         link->setMeshMatrix(E);
