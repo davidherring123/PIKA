@@ -1,5 +1,7 @@
 #include "Robot.h"
 
+#include <iostream>
+
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,6 +16,9 @@ Robot::Robot()
 {
     position = vec3(0, 1, 0);
     limbLength = 3;
+    bodyScale = vec3(.5, 0.15, 1);
+    legScale = vec3(.45);
+    maxLegDistance = legScale.y * limbLength;
 }
 
 void Robot::init(const shared_ptr<Program> _prog, const shared_ptr<Shape> _bodyShape, const std::shared_ptr<Shape> _legShape)
@@ -26,6 +31,35 @@ void Robot::init(const shared_ptr<Program> _prog, const shared_ptr<Shape> _bodyS
     {
         shared_ptr<Leg> l = make_shared<Leg>(limbLength);
         legs.push_back(l);
+    }
+
+    shared_ptr<Leg> l = legs.at(0);
+    l->setStart(position + vec3(1 * bodyScale.x / 2.0f, 0, 1 * bodyScale.z / 2.0f));
+    l->setTarget(vec3(1, 0, 1));
+    l->setScale(legScale);
+
+    l = legs.at(1);
+    l->setStart(position + vec3(-1 * bodyScale.x / 2.0f, 0, 1 * bodyScale.z / 2.0f));
+    l->setTarget(vec3(-1, 0, 1));
+    l->setScale(legScale);
+
+    l = legs.at(2);
+    l->setStart(position + vec3(1 * bodyScale.x / 2.0f, 0, -1 * bodyScale.z / 2.0f));
+    l->setTarget(vec3(1, 0, -1));
+    l->setScale(legScale);
+
+    l = legs.at(3);
+    l->setStart(position + vec3(-1 * bodyScale.x / 2.0f, 0, -1 * bodyScale.z / 2.0f));
+    l->setTarget(vec3(-1, 0, -1));
+    l->setScale(legScale);
+}
+
+void Robot::move(vec3 v)
+{
+    position += v;
+    for (shared_ptr<Leg> l : legs)
+    {
+        l->setStart(l->getStart() + v);
     }
 }
 
@@ -46,27 +80,8 @@ void Robot::draw(const std::shared_ptr<MatrixStack> P, const std::shared_ptr<Mat
 
     int legIndex = 0;
 
-    // for (int i = -1; i < 2; i += 2)
-    // {
-    //     for (int j = -1; j < 2; j += 2)
-    //     {
-    //         MV->pushMatrix();
-    //         shared_ptr<Leg> l = legs.at(legIndex);
-    //         l->setStart(position + vec3(i * bodyScale.x, 0, j * bodyScale.z));
-    //         l->setTarget(position + vec3(i * bodyScale.x * 1.1, -position.y * .9, j * bodyScale.z * 1.1));
-    //         l->setScale(vec3(0.45));
-    //         l->draw(prog, MV, legShape);
-    //         MV->popMatrix();
-    //     }
-    // }
-
-    // Front Left Leg (-Z, +X)
-
-    MV->pushMatrix();
-    shared_ptr<Leg> l = legs.at(legIndex);
-    l->setStart(position + (bodyScale.x, 0, bodyScale.z));
-    l->setTarget(position + vec3(0, -position.y, 0));
-    l->setScale(vec3(0.45));
-    l->draw(prog, MV, legShape);
-    MV->popMatrix();
+    for (shared_ptr<Leg> l : legs)
+    {
+        l->draw(prog, MV, legShape);
+    }
 }

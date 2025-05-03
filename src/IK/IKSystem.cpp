@@ -68,7 +68,7 @@ vector<shared_ptr<Link>> IKSystem::solve(Eigen::Vector2d target)
 
     OptimizerBFGS optimizer;
     optimizer.setIterMax(150);
-    optimizer.setTol(1e-6);
+    optimizer.setTol(1e-3);
     optimizer.setIterMaxLS(20);
     optimizer.setAlphaInit(1.0);
     optimizer.setGamma(0.5);
@@ -76,6 +76,11 @@ vector<shared_ptr<Link>> IKSystem::solve(Eigen::Vector2d target)
     VectorXd theta = VectorXd(nLinks);
     for (int i = 0; i < nLinks; i++)
     {
+        if (theta.hasNaN())
+        {
+            cout << "NaN or Inf detected in theta during optimization!" << endl;
+        }
+
         theta(i) = links[i]->getAngle();
     }
 

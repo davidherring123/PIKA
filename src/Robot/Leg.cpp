@@ -39,8 +39,9 @@ Leg::Leg(int totalLimbs)
 
 void Leg::draw(const shared_ptr<Program> prog, shared_ptr<MatrixStack> MV, const shared_ptr<Shape> shape) const
 {
+    MV->pushMatrix();
     vec3 planeDir = normalize(target - startPosition);
-    vec3 initialDir = normalize(vec3(target.x, target.y, 0) - vec3(startPosition.x, startPosition.y, 0));
+    vec3 initialDir = vec3(1, 0, 0);
     vec3 downdir = vec3(0, -1, 0);
 
     vec3 c1 = cross(planeDir, downdir);
@@ -55,9 +56,13 @@ void Leg::draw(const shared_ptr<Program> prog, shared_ptr<MatrixStack> MV, const
     else
     {
         theta = acos(dot(c1, c2) / (length(c1) * length(c2)));
+        if (planeDir.z > 0)
+        {
+            theta = -theta;
+        }
     }
 
-    vec4 rotatedTarget = rotate(mat4(1.0f), theta, vec3(0, 1, 0)) * glm::scale(mat4(1.0f), 1.0f / s) * vec4(target - startPosition, 1);
+    vec4 rotatedTarget = rotate(mat4(1.0f), -theta, vec3(0, 1, 0)) * glm::scale(mat4(1.0f), 1.0f / s) * vec4(target - startPosition, 1);
 
     Eigen::Vector2d point;
     point << rotatedTarget.x, rotatedTarget.y;
@@ -67,4 +72,5 @@ void Leg::draw(const shared_ptr<Program> prog, shared_ptr<MatrixStack> MV, const
     MV->scale(s);
     iks->solve(point);
     iks->draw(prog, MV, shape);
+    MV->popMatrix();
 }

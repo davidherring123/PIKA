@@ -216,6 +216,7 @@ void render()
 
     MV->pushMatrix();
 
+    // robot->move(vec3(0, 0, -.01));
     robot->draw(P, MV);
 
     MV->popMatrix();
