@@ -52,6 +52,7 @@ void Catmull::addKeyframe(Keyframe kf)
 
 void Catmull::drawSpline()
 {
+    glPushMatrix();
     mat4 G;
 
     if (keyframes.size() < 4)
@@ -79,6 +80,7 @@ void Catmull::drawSpline()
         }
         glEnd();
     }
+    glPopMatrix();
 }
 
 vec3 Catmull::getInterpolatedPosition(int uMax, float u)
