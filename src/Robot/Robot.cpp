@@ -16,13 +16,14 @@
 using namespace std;
 using namespace glm;
 
-Robot::Robot()
+Robot::Robot(shared_ptr<Heightmap> _H)
 {
   position = vec3(0, 1, 0);
   limbLength = 3;
   bodyScale = vec3(.5, 0.2, .5);
   legScale = vec3(.45);
   maxLegDistance = legScale.y * limbLength * .9;
+  H = _H;
 }
 
 void Robot::init(const shared_ptr<Program> _prog, const shared_ptr<Shape> _bodyShape, const std::shared_ptr<Shape> _legShape)
@@ -35,7 +36,7 @@ void Robot::init(const shared_ptr<Program> _prog, const shared_ptr<Shape> _bodyS
   {
     for (int j = 1; j > -2; j -= 2)
     {
-      shared_ptr<Leg> l = make_shared<Leg>(limbLength, vec3(i * bodyScale.x / 2.0f, position.y, j * bodyScale.z / 2.0f), normalize(vec3(i, 0, j)));
+      shared_ptr<Leg> l = make_shared<Leg>(limbLength, vec3(i * bodyScale.x / 2.0f, position.y, j * bodyScale.z / 2.0f), normalize(vec3(i, 0, j)), H);
       l->setTarget(l->getResetTargetPosition());
       l->setScale(legScale);
       legs.push_back(l);
@@ -56,9 +57,29 @@ void Robot::init(const shared_ptr<Program> _prog, const shared_ptr<Shape> _bodyS
 void Robot::move(vec3 v)
 {
   position += v;
+  float AverageTargetHeight = 0.0;
+  float numLegs = 0;
   for (shared_ptr<Leg> l : legs)
   {
-    l->setStart(l->getStart() + v);
+    if (l->currentState == LegState::Idle)
+    {
+      AverageTargetHeight += l->getTarget().y;
+    }
+    else if (l->currentState == LegState::Adjusting)
+    {
+      AverageTargetHeight += l->interpolatedHeight;
+    }
+    numLegs++;
+  }
+
+  position.y = AverageTargetHeight / numLegs + 0.8f;
+
+  for (shared_ptr<Leg> l : legs)
+  {
+    vec3 newStart = l->getStart() + v;
+    newStart.y = position.y;
+
+    l->setStart(newStart);
 
     float d = distance(l->getStart(), l->getTarget());
 

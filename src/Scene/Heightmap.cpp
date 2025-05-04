@@ -32,18 +32,19 @@ Heightmap::Heightmap()
   length = 10;
 }
 
-Heightmap::Heightmap(float _seed, float _maxHeight, float _minHeight)
+Heightmap::Heightmap(float _seed, float _maxHeight, float _minHeight, float _scale)
 {
   seed = _seed;
   maxHeight = _maxHeight;
   minHeight = _minHeight;
   width = 10;
   length = 10;
+  scale = _scale;
 }
 
 float Heightmap::getHeight(float x, float z)
 {
-  float perlinValue = perlin(vec2(x, z) + vec2(seed, seed));
+  float perlinValue = perlin(vec2(x * scale, z * scale) + vec2(seed, seed));
 
   float normalizedZ = (perlinValue + 1) / 2.0f;
   float y = minHeight + (normalizedZ * (maxHeight - minHeight));

@@ -14,6 +14,7 @@
 #include "../Scene/Shape.h"
 #include "../Scene/MatrixStack.h"
 #include "../Scene/Program.h"
+#include "../Scene/Heightmap.h"
 
 #include "../Curves/Catmull.h"
 
@@ -26,9 +27,10 @@ enum class LegState
 class Leg
 {
 public:
-  Leg(int _totalLimbs, glm::vec3 _startPosition, glm::vec3 _facingDir);
+  Leg(int _totalLimbs, glm::vec3 _startPosition, glm::vec3 _facingDir, std::shared_ptr<Heightmap> _H);
   glm::vec3 getTarget() { return target; };
   void setTarget(glm::vec3 _target) { target = _target; };
+  glm::vec3 getTargetLocal() { return targetLocal; };
   glm::vec3 getStart() { return startPosition; };
   void setStart(glm::vec3 _startPosition) { startPosition = _startPosition; };
   void draw(const std::shared_ptr<Program> prog, std::shared_ptr<MatrixStack> MV, const std::shared_ptr<Shape> shape);
@@ -46,6 +48,8 @@ public:
 
   std::vector<int> neighborIndices;
 
+  float interpolatedHeight;
+
 private:
   void generateCurve();
 
@@ -57,6 +61,10 @@ private:
 
   float resetDistance;
   glm::vec3 targetLocal;
+
+  std::shared_ptr<Heightmap> H;
+  float legHeightInterpolationStart;
+  float legHeightInterpolationEnd;
 };
 
 #endif

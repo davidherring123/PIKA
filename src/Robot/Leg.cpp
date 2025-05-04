@@ -31,7 +31,7 @@
 using namespace std;
 using namespace glm;
 
-Leg::Leg(int _totalLimbs, vec3 _startPosition, vec3 _facingDir)
+Leg::Leg(int _totalLimbs, vec3 _startPosition, vec3 _facingDir, shared_ptr<Heightmap> _H)
 {
   iks = make_shared<IKSystem>(_totalLimbs);
   startPosition = _startPosition;
@@ -42,6 +42,7 @@ Leg::Leg(int _totalLimbs, vec3 _startPosition, vec3 _facingDir)
   currentState = LegState::Idle;
   t = 0;
   neighborIndices = {};
+  H = _H;
 }
 
 void Leg::draw(const shared_ptr<Program> prog, shared_ptr<MatrixStack> MV, const shared_ptr<Shape> shape)
@@ -89,9 +90,10 @@ void Leg::draw(const shared_ptr<Program> prog, shared_ptr<MatrixStack> MV, const
     float s = curve->getALTable().back().second * sNorm;
     float u = curve->s2u(s);
     targetLocal = curve->getInterpolatedPosition(2, u);
-    // curve->drawSpline();
 
-    t += 0.04f;
+    interpolatedHeight = legHeightInterpolationStart + (legHeightInterpolationEnd - legHeightInterpolationStart) * t;
+
+    t += 0.05f;
     if (t > 1)
     {
       stopAdjusting();
@@ -139,6 +141,7 @@ vec3 Leg::getResetTargetPosition()
 {
   vec3 pos = vec3(startPosition.x, 0, startPosition.z);
   pos += resetDistance * facingDir;
+  pos.y = H->getHeight(pos.x, pos.z);
   return pos;
 }
 
@@ -146,9 +149,10 @@ void Leg::startAdjusting()
 {
   currentState = LegState::Adjusting;
   targetLocal = target - startPosition;
-
-  t = 0;
+  legHeightInterpolationStart = target.y;
+  legHeightInterpolationEnd = getResetTargetPosition().y;
   generateCurve();
+  t = 0;
 }
 
 void Leg::stopAdjusting()

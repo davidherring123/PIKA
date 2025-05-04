@@ -12,13 +12,14 @@
 #include "../Scene/Shape.h"
 #include "../Scene/MatrixStack.h"
 #include "../Scene/Program.h"
+#include "../Scene/Heightmap.h"
 
 #include "Leg.h"
 
 class Robot
 {
 public:
-  Robot();
+  Robot(std::shared_ptr<Heightmap> _H);
   void init(const std::shared_ptr<Program> _prog, const std::shared_ptr<Shape> _bodyShape, const std::shared_ptr<Shape> _legShape);
   void move(glm::vec3 v);
   void draw(const std::shared_ptr<MatrixStack> P, const std::shared_ptr<MatrixStack> MV);
@@ -30,6 +31,8 @@ private:
   glm::vec3 bodyScale;
   std::shared_ptr<Shape> legShape;
   glm::vec3 legScale;
+
+  std::shared_ptr<Heightmap> H;
 
   float maxLegDistance;
 

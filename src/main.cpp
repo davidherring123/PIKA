@@ -151,7 +151,7 @@ static void init()
 
   camera = make_shared<Camera>();
 
-  H = make_shared<Heightmap>(0, 0, .1);
+  H = make_shared<Heightmap>(0, 0, 1, 0.25);
   plane = H->generatePlane(RESOURCE_DIR);
   plane->init();
 
@@ -168,7 +168,7 @@ static void init()
   robotMovespeed = 0.01f;
   robotTurnspeed = 0.0f;
 
-  robot = make_shared<Robot>();
+  robot = make_shared<Robot>(H);
   robot->init(prog, bodyShape, legShape);
 
   // Initialize time.
