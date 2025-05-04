@@ -20,7 +20,7 @@ Robot::Robot()
 {
     position = vec3(0, 1, 0);
     limbLength = 3;
-    bodyScale = vec3(.5, 0.15, 1);
+    bodyScale = vec3(.5, 0.2, .5);
     legScale = vec3(.45);
     maxLegDistance = legScale.y * limbLength * .9;
 }
@@ -30,8 +30,6 @@ void Robot::init(const shared_ptr<Program> _prog, const shared_ptr<Shape> _bodyS
     prog = _prog;
     bodyShape = _bodyShape;
     legShape = _legShape;
-
-    // vec3 facingDir[] = {vec3(1, 0, 0), vec3(1, 0, -1), vec3(-1, 0, 1), vec3(-1, 0, 0)};
 
     int facingIndex = 0;
 
@@ -106,7 +104,4 @@ void Robot::draw(const std::shared_ptr<MatrixStack> P, const std::shared_ptr<Mat
     {
         l->draw(prog, MV, legShape);
     }
-
-    // shared_ptr<Leg> l = legs.at(0);
-    // l->draw(prog, MV, legShape);
 }

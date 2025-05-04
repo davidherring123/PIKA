@@ -30,7 +30,7 @@ IKSystem::IKSystem(int _nLinks)
 {
 
     nLinks = _nLinks;
-    weights << 1e1, 1e0, 1e0;
+    weights << 1e3, 1e1, 1e0;
 
     Matrix4d E(Matrix4d::Identity());
 
@@ -45,6 +45,10 @@ IKSystem::IKSystem(int _nLinks)
         link->setPosition((i == 0 ? 0.0 : 1.0), 0.0);
         E(0, 3) = 0.5;
         link->setMeshMatrix(E);
+        if (i == 0)
+        {
+            links[i]->setAngle(0);
+        }
         if (i > 0)
         {
             links[i - 1]->addChild(links[i]);
@@ -64,7 +68,7 @@ vector<shared_ptr<Link>> IKSystem::solve(Eigen::Vector2d target)
     objective->setPTarget(target);
     objective->setWTarget(weights(0));
     MatrixXd wReg = MatrixXd::Identity(nLinks, nLinks);
-    wReg(0, 0) = 0;
+    wReg(0, 0) = weights(1);
     objective->setWRegularizer(wReg);
 
     OptimizerBFGS optimizer;
@@ -77,12 +81,11 @@ vector<shared_ptr<Link>> IKSystem::solve(Eigen::Vector2d target)
     VectorXd theta = VectorXd(nLinks);
     for (int i = 0; i < nLinks; i++)
     {
-        if (theta.hasNaN())
-        {
-            cout << "NaN or Inf detected in theta during optimization!" << endl;
-        }
-
         theta(i) = links[i]->getAngle();
+        if (theta(i) > M_PI - 0.1f)
+        {
+            theta(i) = M_PI - 0.1f;
+        }
     }
 
     VectorXd angle = optimizer.optimize(objective, theta);
@@ -90,9 +93,9 @@ vector<shared_ptr<Link>> IKSystem::solve(Eigen::Vector2d target)
     for (int i = 0; i < nLinks; i++)
     {
         double val = angle(i);
-        while (val > M_PI)
+        while (val > 2 * M_PI)
             val -= 2 * M_PI;
-        while (val < -M_PI)
+        while (val < 2 * -M_PI)
             val += 2 * M_PI;
 
         x(i) = val;
