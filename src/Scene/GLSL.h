@@ -21,23 +21,24 @@
 template <typename T>
 std::string NumberToString(T x)
 {
-	std::ostringstream ss;
-	ss << x;
-	return ss.str();
+  std::ostringstream ss;
+  ss << x;
+  return ss.str();
 }
 
 #define GET_FILE_LINE (std::string(__FILE__) + ":" + NumberToString(__LINE__)).c_str()
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace GLSL {
+namespace GLSL
+{
 
-	void checkVersion();
-	void checkError(const char *str = 0);
-	void printProgramInfoLog(GLuint program);
-	void printShaderInfoLog(GLuint shader);
-	int textFileWrite(const char *filename, const char *s);
-	char *textFileRead(const char *filename);
-	bool validUTF8(std::vector<int> &data);
+  void checkVersion();
+  void checkError(const char *str = 0);
+  void printProgramInfoLog(GLuint program);
+  void printShaderInfoLog(GLuint shader);
+  int textFileWrite(const char *filename, const char *s);
+  char *textFileRead(const char *filename);
+  bool validUTF8(std::vector<int> &data);
 }
 
 #endif

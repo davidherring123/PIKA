@@ -18,24 +18,24 @@
 class Robot
 {
 public:
-    Robot();
-    void init(const std::shared_ptr<Program> _prog, const std::shared_ptr<Shape> _bodyShape, const std::shared_ptr<Shape> _legShape);
-    void move(glm::vec3 v);
-    void draw(const std::shared_ptr<MatrixStack> P, const std::shared_ptr<MatrixStack> MV);
+  Robot();
+  void init(const std::shared_ptr<Program> _prog, const std::shared_ptr<Shape> _bodyShape, const std::shared_ptr<Shape> _legShape);
+  void move(glm::vec3 v);
+  void draw(const std::shared_ptr<MatrixStack> P, const std::shared_ptr<MatrixStack> MV);
 
 private:
-    std::vector<std::shared_ptr<Leg>> legs;
-    std::shared_ptr<Program> prog;
-    std::shared_ptr<Shape> bodyShape;
-    glm::vec3 bodyScale;
-    std::shared_ptr<Shape> legShape;
-    glm::vec3 legScale;
+  std::vector<std::shared_ptr<Leg>> legs;
+  std::shared_ptr<Program> prog;
+  std::shared_ptr<Shape> bodyShape;
+  glm::vec3 bodyScale;
+  std::shared_ptr<Shape> legShape;
+  glm::vec3 legScale;
 
-    float maxLegDistance;
+  float maxLegDistance;
 
-    int limbLength;
+  int limbLength;
 
-    glm::vec3 position;
+  glm::vec3 position;
 };
 
 #endif
