@@ -31,8 +31,6 @@ void Robot::init(const shared_ptr<Program> _prog, const shared_ptr<Shape> _bodyS
     bodyShape = _bodyShape;
     legShape = _legShape;
 
-    int facingIndex = 0;
-
     for (int i = 1; i > -2; i -= 2)
     {
         for (int j = 1; j > -2; j -= 2)
@@ -41,9 +39,10 @@ void Robot::init(const shared_ptr<Program> _prog, const shared_ptr<Shape> _bodyS
             l->setTarget(l->getResetTargetPosition());
             l->setScale(legScale);
             legs.push_back(l);
-            facingIndex++;
         }
     }
+
+    // Set Neighbors
     legs.at(0)->neighborIndices.push_back(1);
     legs.at(0)->neighborIndices.push_back(2);
     legs.at(1)->neighborIndices.push_back(0);
@@ -67,10 +66,11 @@ void Robot::move(vec3 v)
 
         float theta = acos(dot(currDir, l->facingDir) / (length(currDir) * length(l->facingDir)));
 
+        // Make Leg isn't facing inside Robot
         bool invalidAngle = theta > radians(60.0f) || theta < radians(-60.0f);
 
+        // Make sure neighbor legs aren't adjusting
         bool neighborsAdjusting = false;
-
         for (int i : l->neighborIndices)
         {
             if (legs.at(i)->currentState == LegState::Adjusting)
@@ -79,6 +79,7 @@ void Robot::move(vec3 v)
             }
         }
 
+        // if angle is bad or distance too great, adjust robot leg
         if ((invalidAngle || d > maxLegDistance) && l->currentState == LegState::Idle && !neighborsAdjusting)
         {
             l->startAdjusting();
