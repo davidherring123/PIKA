@@ -151,7 +151,7 @@ static void init()
 
   camera = make_shared<Camera>();
 
-  H = make_shared<Heightmap>();
+  H = make_shared<Heightmap>(0, 0, .1);
   plane = H->generatePlane(RESOURCE_DIR);
   plane->init();
 
@@ -248,10 +248,11 @@ void render()
 
   MV->pushMatrix();
 
-  glUniform3f(prog->getUniform("kd"), 0.5f, 0.5f, 0.5f);
+  glUniform3f(prog->getUniform("kd"), 1.0f, 1.0f, 1.0f);
   glUniformMatrix4fv(prog->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P->topMatrix()));
   glUniformMatrix4fv(prog->getUniform("MV"), 1, GL_FALSE, glm::value_ptr(MV->topMatrix()));
-  // plane->draw(prog);
+
+  plane->draw(prog);
 
   robot->move(rotatedMoveInput * robotMovespeed);
 

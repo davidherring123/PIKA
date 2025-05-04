@@ -28,6 +28,8 @@ Heightmap::Heightmap()
   seed = 0;
   maxHeight = 1;
   minHeight = 0;
+  width = 10;
+  length = 10;
 }
 
 Heightmap::Heightmap(float _seed, float _maxHeight, float _minHeight)
@@ -35,38 +37,39 @@ Heightmap::Heightmap(float _seed, float _maxHeight, float _minHeight)
   seed = _seed;
   maxHeight = _maxHeight;
   minHeight = _minHeight;
+  width = 10;
+  length = 10;
 }
 
-float Heightmap::getHeight(float x, float y)
+float Heightmap::getHeight(float x, float z)
 {
-  float perlinValue = perlin(vec2(x, y) + vec2(seed, seed));
+  float perlinValue = perlin(vec2(x, z) + vec2(seed, seed));
 
   float normalizedZ = (perlinValue + 1) / 2.0f;
-  float z = minHeight + (normalizedZ * (maxHeight - minHeight));
+  float y = minHeight + (normalizedZ * (maxHeight - minHeight));
 
-  return z;
+  return y;
 }
 
 shared_ptr<Shape> Heightmap::generatePlane(string RESOURCE_DIR)
 {
   vector<vec3> vertices;
-  vector<vec3> normals;
   vector<int> faces;
 
   int rows = 100;
   int cols = 100;
-  float stepSize = 1.0f / (float)(rows - 1);
+  float stepSizeX = width / (float)(cols - 1);
+  float stepSizeZ = length / (float)(rows - 1);
 
   // Generate vertices and normals
   for (int i = 0; i < rows; i++)
   {
     for (int j = 0; j < cols; j++)
     {
-      float x = -0.5f + j * stepSize;
-      float z = -0.5f + i * stepSize;
+      float x = -(width / 2.0f) + j * stepSizeX;
+      float z = -(length / 2.0f) + i * stepSizeZ;
 
-      vertices.push_back(vec3(x, getHeight(x, z), z)); // Position of the vertex
-      normals.push_back(vec3(0.0f, 1.0f, 0.0f));       // Normals pointing upwards
+      vertices.push_back(vec3(x, getHeight(x, z), z));
     }
   }
 
@@ -83,14 +86,38 @@ shared_ptr<Shape> Heightmap::generatePlane(string RESOURCE_DIR)
 
       // First triangle (top-left, top-right, bottom-left)
       faces.push_back(topLeft);
-      faces.push_back(topRight);
       faces.push_back(bottomLeft);
+      faces.push_back(topRight);
 
-      // Second triangle (bottom-left, top-right, bottom-right)
-      faces.push_back(bottomLeft);
       faces.push_back(topRight);
+      faces.push_back(bottomLeft);
       faces.push_back(bottomRight);
     }
+  }
+
+  vector<vec3> normals(vertices.size(), vec3(0.0f));
+
+  // For each face, add the face normal to the vertices of that face
+  for (int i = 0; i < faces.size(); i += 3)
+  {
+    int v1 = faces[i];
+    int v2 = faces[i + 1];
+    int v3 = faces[i + 2];
+
+    vec3 v1v2 = vertices[v2] - vertices[v1];
+    vec3 v1v3 = vertices[v3] - vertices[v1];
+    vec3 faceNormal = normalize(cross(v1v2, v1v3));
+
+    // Accumulate the normal for each vertex
+    normals[v1] += faceNormal;
+    normals[v2] += faceNormal;
+    normals[v3] += faceNormal;
+  }
+
+  // Normalize all the normals
+  for (auto &normal : normals)
+  {
+    normal = normalize(normal);
   }
 
   ofstream file(RESOURCE_DIR + "plane.obj", ios::out | ios::trunc);
