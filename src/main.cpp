@@ -32,6 +32,8 @@ shared_ptr<Camera> camera;
 shared_ptr<Shape> bodyShape, legShape;
 
 shared_ptr<Robot> robot;
+Catmull spline;
+Keyframe k1, k2, k3, k4, k5;
 
 vec3 robotPosition;
 float robotRotation, robotMovespeed, robotTurnspeed;
@@ -155,8 +157,8 @@ static void init()
 
     robotPosition = vec3(0, 0, 0);
     robotRotation = 0.0f;
-    robotMovespeed = 0.05f;
-    robotTurnspeed = 0.05f;
+    robotMovespeed = 0.01f;
+    robotTurnspeed = 0.0f;
 
     robot = make_shared<Robot>();
     robot->init(prog, bodyShape, legShape);
@@ -212,19 +214,6 @@ void render()
     MV->pushMatrix();
     camera->applyViewMatrix(MV);
 
-    prog->bind();
-
-    MV->pushMatrix();
-
-    // robot->move(vec3(0, 0, -.01));
-    robot->draw(P, MV);
-
-    MV->popMatrix();
-
-    prog->unbind();
-
-    // Draw the frame and the grid with OpenGL 1.x (no GLSL)
-
     // Setup the projection matrix
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -234,6 +223,30 @@ void render()
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadMatrixf(glm::value_ptr(MV->topMatrix()));
+
+    pair<vec3, float> robotMovement = moveRobot();
+
+    // Movement
+
+    robotRotation += robotMovement.second * robotTurnspeed;
+    float sinYaw = sin(robotRotation);
+    float cosYaw = cos(robotRotation);
+    vec3 rotatedMoveInput;
+    rotatedMoveInput.x = -(robotMovement.first.x * cosYaw - robotMovement.first.z * sinYaw);
+    rotatedMoveInput.z = robotMovement.first.x * sinYaw + robotMovement.first.z * cosYaw;
+    rotatedMoveInput.y = 0.0f;
+
+    prog->bind();
+
+    MV->pushMatrix();
+
+    robot->move(rotatedMoveInput * robotMovespeed);
+
+    robot->draw(P, MV);
+
+    MV->popMatrix();
+
+    prog->unbind();
 
     // Draw frame
     glLineWidth(2);

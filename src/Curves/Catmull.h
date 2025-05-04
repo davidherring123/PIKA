@@ -20,6 +20,11 @@ public:
     glm::vec3 getInterpolatedPosition(int uMax, float u);
     glm::quat getInterpolatedRotation(int uMax, float u);
     void buildALTable();
+    void clearALTable()
+    {
+        keyframes.clear();
+        ALTable.clear();
+    };
     std::vector<std::pair<float, float>> getALTable();
     float s2u(float s);
 
