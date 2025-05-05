@@ -42,6 +42,9 @@ float robotRotation, robotMovespeed, robotTurnspeed;
 
 shared_ptr<Heightmap> H;
 
+int HeightMapNumber = 0;
+const int TOTALMAPS = 3;
+
 static void error_callback(int error, const char *description)
 {
   cerr << description << endl;
@@ -57,6 +60,11 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 
 static void char_callback(GLFWwindow *window, unsigned int key)
 {
+  if (key == (unsigned int)"h" || key == (unsigned int)"H")
+  {
+    HeightMapNumber++;
+    HeightMapNumber = HeightMapNumber % TOTALMAPS;
+  }
 }
 
 static void cursor_position_callback(GLFWwindow *window, double xmouse, double ymouse)
