@@ -16,21 +16,22 @@
 using namespace std;
 using namespace glm;
 
-Robot::Robot(shared_ptr<Heightmap> _H)
+Robot::Robot()
 {
-  position = vec3(0, 1, 0);
   limbLength = 3;
   bodyScale = vec3(.5, 0.2, .5);
   legScale = vec3(.45);
   maxLegDistance = legScale.y * limbLength * .9;
-  H = _H;
 }
 
 void Robot::init(const shared_ptr<Program> _prog, const shared_ptr<Shape> _bodyShape, const std::shared_ptr<Shape> _legShape)
 {
+  position = vec3(0, 1, 0);
   prog = _prog;
   bodyShape = _bodyShape;
   legShape = _legShape;
+
+  legs.clear();
 
   for (int i = 1; i > -2; i -= 2)
   {
@@ -126,4 +127,12 @@ void Robot::draw(const std::shared_ptr<MatrixStack> P, const std::shared_ptr<Mat
   {
     l->draw(prog, MV, legShape);
   }
+}
+
+void Robot::setHeightMap(std::shared_ptr<Heightmap> _H)
+{
+  H = _H;
+  init(prog, bodyShape, legShape);
+
+  move(vec3(0));
 }

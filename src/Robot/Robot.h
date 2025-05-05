@@ -19,10 +19,11 @@
 class Robot
 {
 public:
-  Robot(std::shared_ptr<Heightmap> _H);
+  Robot();
   void init(const std::shared_ptr<Program> _prog, const std::shared_ptr<Shape> _bodyShape, const std::shared_ptr<Shape> _legShape);
   void move(glm::vec3 v);
   void draw(const std::shared_ptr<MatrixStack> P, const std::shared_ptr<MatrixStack> MV);
+  void setHeightMap(std::shared_ptr<Heightmap> _H);
 
 private:
   std::vector<std::shared_ptr<Leg>> legs;

@@ -40,7 +40,7 @@ Keyframe k1, k2, k3, k4, k5;
 vec3 robotPosition;
 float robotRotation, robotMovespeed, robotTurnspeed;
 
-shared_ptr<Heightmap> H;
+shared_ptr<Heightmap> H0, H1, H2;
 
 int HeightMapNumber = 0;
 const int TOTALMAPS = 3;
@@ -60,10 +60,35 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 
 static void char_callback(GLFWwindow *window, unsigned int key)
 {
-  if (key == (unsigned int)"h" || key == (unsigned int)"H")
+  if (key == 'h' || key == 'H')
   {
     HeightMapNumber++;
     HeightMapNumber = HeightMapNumber % TOTALMAPS;
+
+    switch (HeightMapNumber)
+    {
+    case 0:
+    {
+      robot->setHeightMap(H0);
+      plane = H0->generatePlane(RESOURCE_DIR);
+      plane->init();
+      break;
+    }
+    case 1:
+    {
+      robot->setHeightMap(H1);
+      plane = H1->generatePlane(RESOURCE_DIR);
+      plane->init();
+      break;
+    }
+    case 2:
+    {
+      robot->setHeightMap(H2);
+      plane = H2->generatePlane(RESOURCE_DIR);
+      plane->init();
+      break;
+    }
+    }
   }
 }
 
@@ -159,8 +184,10 @@ static void init()
 
   camera = make_shared<Camera>();
 
-  H = make_shared<Heightmap>(0, 0, 1, 0.25);
-  plane = H->generatePlane(RESOURCE_DIR);
+  H0 = make_shared<Heightmap>(0, 0, 0, 0);
+  H1 = make_shared<Heightmap>(0, 0, 1, 0.25);
+  H2 = make_shared<Heightmap>(0, 0, 2, 0.5);
+  plane = H0->generatePlane(RESOURCE_DIR);
   plane->init();
 
   bodyShape = make_shared<Shape>();
@@ -176,7 +203,8 @@ static void init()
   robotMovespeed = 0.01f;
   robotTurnspeed = 0.0f;
 
-  robot = make_shared<Robot>(H);
+  robot = make_shared<Robot>();
+  robot->setHeightMap(H0);
   robot->init(prog, bodyShape, legShape);
 
   // Initialize time.
@@ -269,44 +297,6 @@ void render()
   MV->popMatrix();
 
   prog->unbind();
-
-  // Draw frame
-  glLineWidth(2);
-  glBegin(GL_LINES);
-  glColor3f(1, 0, 0);
-  glVertex3f(0, 0, 0);
-  glVertex3f(1, 0, 0);
-  glColor3f(0, 1, 0);
-  glVertex3f(0, 0, 0);
-  glVertex3f(0, 1, 0);
-  glColor3f(0, 0, 1);
-  glVertex3f(0, 0, 0);
-  glVertex3f(0, 0, 1);
-  glEnd();
-  glLineWidth(1);
-
-  // Draw grid
-  float gridSizeHalf = 20.0f;
-  int gridNx = 40;
-  int gridNz = 40;
-  glLineWidth(1);
-  glColor3f(0.8f, 0.8f, 0.8f);
-  glBegin(GL_LINES);
-  for (int i = 0; i < gridNx + 1; ++i)
-  {
-    float alpha = i / (float)gridNx;
-    float x = (1.0f - alpha) * (-gridSizeHalf) + alpha * gridSizeHalf;
-    glVertex3f(x, 0, -gridSizeHalf);
-    glVertex3f(x, 0, gridSizeHalf);
-  }
-  for (int i = 0; i < gridNz + 1; ++i)
-  {
-    float alpha = i / (float)gridNz;
-    float z = (1.0f - alpha) * (-gridSizeHalf) + alpha * gridSizeHalf;
-    glVertex3f(-gridSizeHalf, 0, z);
-    glVertex3f(gridSizeHalf, 0, z);
-  }
-  glEnd();
 
   // Pop modelview matrix
   glPopMatrix();

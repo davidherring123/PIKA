@@ -37,8 +37,8 @@ Heightmap::Heightmap(float _seed, float _maxHeight, float _minHeight, float _sca
   seed = _seed;
   maxHeight = _maxHeight;
   minHeight = _minHeight;
-  width = 100;
-  length = 100;
+  width = 40;
+  length = 40;
   scale = _scale;
 }
 
