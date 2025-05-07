@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PIKA</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>PIKA (Procedural Inverse Kinematic Animation)</h1>
+      <h3>by <i>David Herring</i></h3>
+    </header>
+
+    <div class="video-container">
+      <iframe
+        width="480"
+        height="360"
+        src="https://youtu.be/TG_cjqXNJE4"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    </div>
+
+    <section class="text-container">
+      <h2>Overview</h2>
+      <div class="card">
+        <p>
+          <b
+            >Want to bring a four-legged robot to life but don't know how to
+            animate?</b
+          >
+          Enter PIKA. Using Inverse Kinematics and height maps, PIKA solves this
+          by procedurally determining leg positions and animating them along
+          Catmull-Rom splines. By introducing additional rules—such as only one
+          leg on each side being allowed to lift at a time—a realistic movement
+          system comes to life.
+        </p>
+      </div>
+    </section>
+
+    <section class="text-container features">
+      <h2>Key Features</h2>
+      <div class="grid cards">
+        <div class="card">
+          <h3>Leg Placement</h3>
+          <p>Real‑time IK solves joint angles for naturally positioned legs.</p>
+        </div>
+        <div class="card">
+          <h3>Terrain Adaptation</h3>
+          <p>
+            Using Heightmap functions, legs are able to adjust on uneven
+            surfaces.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Animation</h3>
+          <p>
+            Catmull-Rom splines + IK Solving creates smooth and natural
+            transitions between leg positions
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="text-container tech cards">
+      <h2>Technologies Used</h2>
+      <div class="grid tech-grid">
+        <div class="card">IK Solver (BFGS Optimization)</div>
+        <div class="card">Perlin Noise (Terrain Generation)</div>
+        <div class="card">Finite State Machine</div>
+        <div class="card">GLM &amp; Eigen (Math &amp; Linear Algebra)</div>
+      </div>
+    </section>
+  </body>
+</html>
