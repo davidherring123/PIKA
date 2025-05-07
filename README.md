@@ -1,6 +1,8 @@
 # PIKA
 Procedural Inverse Kinematic Animation (PIKA)
 
+Need GLM, GLFW, and Eigen Libraries.
+
 Need to Run in **Release Mode**:
 
 ```
@@ -11,3 +13,5 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j4
 ./PIKA
 ```
+
+https://youtu.be/TG_cjqXNJE4
